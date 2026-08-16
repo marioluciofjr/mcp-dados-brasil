@@ -7,9 +7,6 @@ Você não precisa saber o nome de nenhuma tool para usar o MCP: basta perguntar
 > [!NOTE]
 > Os números (valores em R$, quantidades, datas de notícia) mudam a cada nova consulta, porque as fontes são atualizadas o tempo todo. O trecho de resposta aqui é uma fotografia do dia do teste — o formato e o tipo de informação que você recebe são o que importa reproduzir.
 
-> [!NOTE]
-> Os exemplos políticos (Câmara e Senado) citam no máximo 2 parlamentares de partido de esquerda e 2 de partido de direita, sempre pelo mesmo par em cada lado, para não desequilibrar o guia para nenhum espectro. Nas perguntas que devolvem uma lista de vários parlamentares (ex.: "quais deputados são do PT"), o trecho de resposta mostra só a contagem, não o nome de cada um.
-
 ## Índice
 
 * [Pix](#pix) — 7 exemplos
