@@ -15,6 +15,7 @@
 * [Como instalar no Gemini Spark](#como-instalar-no-gemini-spark)
 * [Como instalar no Claude Web](#como-instalar-no-claude-web)
 * [Como instalar no ChatGPT](#como-instalar-no-chatgpt)
+* [Exemplos de uso](#exemplos-de-uso)
 * [Links úteis](#links-úteis)
 * [Contribuições](#contribuições)
 * [Licença](#licença)
@@ -154,6 +155,10 @@ O Gemini Spark é o modo agêntico do Gemini App.
 6. Clique na caixa de seleção "Entendi e quero continuar".
 7. Clique no botão "Criar".
 8. Na nova tela, clique no botão "Conectar".
+
+## Exemplos de uso
+
+Conectou o MCP e não sabe o que perguntar? Veja **[exemplos-de-uso.md](exemplos-de-uso.md)** — um guia com 50 perguntas em linguagem natural, prontas para usar, cobrindo as 11 tools. Cada uma foi testada de verdade contra os dados reais das 6 fontes, incluindo 20 perguntas que cruzam 2 ou 3 tools ao mesmo tempo (ex.: "onde fica Cuiabá, como está o Pix por lá, e o que saiu no Diário Oficial mencionando a cidade?"). É o ponto de partida recomendado para quem quer ter ideia rápida das possibilidades antes de explorar por conta própria.
 
 ## Links úteis
 

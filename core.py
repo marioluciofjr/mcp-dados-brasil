@@ -68,6 +68,19 @@ class ClienteHTTP:
         corpo = await self._get(url, params=params, headers=headers, timeout=timeout)
         return corpo.text
 
+    async def buscar_bytes(
+        self,
+        url: str,
+        *,
+        params: dict | None = None,
+        headers: dict | None = None,
+        timeout: float | None = None,
+    ) -> bytes:
+        """Faz um GET assíncrono e devolve o corpo cru em bytes (usado para arquivo
+        compactado, como o CSV de despesas da Câmara em .zip)."""
+        corpo = await self._get(url, params=params, headers=headers, timeout=timeout)
+        return corpo.content
+
     async def _get(
         self,
         url: str,

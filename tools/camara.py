@@ -10,6 +10,13 @@ cada uma delegando para o método correspondente da classe.
 
 from __future__ import annotations
 
+import csv
+import io
+import time
+import zipfile
+from collections import defaultdict
+from datetime import date
+
 from mcp.types import ToolAnnotations
 
 from core import ClienteHTTP, ErroConsultaExterna, Formatador, http, mcp
@@ -22,8 +29,18 @@ class ClienteCamara:
 
     _BASE_URL = "https://dadosabertos.camara.leg.br/api/v2"
 
+    # O endpoint /deputados/{id}/despesas da API JSON está com o backend fora do
+    # ar: toda resposta vem com "dados": [] e o cabeçalho HTTP `retry-after` fixo,
+    # mesmo para combinações de deputado/ano historicamente conhecidas por terem
+    # despesa registrada — sinal de um circuit breaker devolvendo uma resposta
+    # sintética, não de falta de dado real. Por isso as despesas vêm do arquivo
+    # CSV oficial que a própria Câmara publica por ano (mesmo dado, fonte diferente).
+    _URL_CSV_DESPESAS = "https://www.camara.leg.br/cotas/Ano-{ano}.csv.zip"
+    _TTL_CACHE_DESPESAS_SEGUNDOS = 6 * 60 * 60
+
     def __init__(self, cliente_http: ClienteHTTP) -> None:
         self._http = cliente_http
+        self._cache_despesas: dict[int, tuple[float, dict[str, list[dict]]]] = {}
 
     async def buscar_deputados(self, nome: str | None, estado: str | None, partido: str | None, top: int) -> str:
         """Busca deputados por nome, UF e/ou partido e devolve a lista formatada."""
@@ -124,7 +141,8 @@ class ClienteCamara:
         return "\n".join(linhas)
 
     async def despesas_deputado(self, id_deputado: int | None, nome: str | None, ano: int | None, mes: int | None, top: int) -> str:
-        """Resolve o id do deputado (por nome, se preciso) e devolve as despesas CEAP dele."""
+        """Resolve o id do deputado (por nome, se preciso) e devolve as despesas CEAP dele,
+        lidas do arquivo CSV oficial anual (ver nota em `_URL_CSV_DESPESAS`)."""
         top = max(1, min(top, 100))
 
         if not id_deputado:
@@ -135,28 +153,68 @@ class ClienteCamara:
                 return id_deputado_ou_erro  # já é a mensagem de erro/ambiguidade pronta
             id_deputado = id_deputado_ou_erro
 
-        params: dict[str, int] = {"itens": top, "ordem": "DESC", "ordenarPor": "dataDocumento"}
-        if ano:
-            params["ano"] = ano
-        if mes:
-            params["mes"] = mes
-
+        ano_consulta = ano or date.today().year
         try:
-            dados = await self._http.buscar_json(f"{self._BASE_URL}/deputados/{id_deputado}/despesas", params=params)
+            despesas_por_deputado = await self._obter_despesas_do_ano(ano_consulta)
         except ErroConsultaExterna as exc:
-            return f"Não consegui consultar as despesas do deputado {id_deputado}: {exc}"
+            return f"Não consegui baixar o arquivo de despesas de {ano_consulta}: {exc}"
 
-        despesas = dados.get("dados", [])
-        if not despesas:
-            return f"Nenhuma despesa encontrada para o deputado id {id_deputado}{self._descrever_periodo(ano, mes)}."
+        linhas_deputado = despesas_por_deputado.get(str(id_deputado), [])
+        if mes:
+            linhas_deputado = [linha for linha in linhas_deputado if linha.get("numMes") == str(mes)]
 
-        total = sum(d.get("valorLiquido") or d.get("valorDocumento") or 0 for d in despesas)
-        linhas = [f"Despesas do deputado id {id_deputado} — {len(despesas)} registro(s), total {Formatador.moeda(total)}:\n"]
-        for d in despesas:
-            valor = d.get("valorLiquido") or d.get("valorDocumento") or 0
-            linhas.append(f"- {d.get('dataDocumento', '?')} | {d.get('tipoDespesa', '?')} | {d.get('nomeFornecedor', '?')}: {Formatador.moeda(valor)}")
-        linhas.append("\nFonte: Câmara dos Deputados — API de Dados Abertos (CEAP).")
+        if not linhas_deputado:
+            return f"Nenhuma despesa encontrada para o deputado id {id_deputado}{self._descrever_periodo(ano_consulta, mes)}."
+
+        linhas_deputado.sort(key=lambda linha: linha.get("datEmissao", ""), reverse=True)
+        total = sum(self._valor_liquido(linha) for linha in linhas_deputado)
+        selecionadas = linhas_deputado[:top]
+
+        linhas = [
+            f"Despesas do deputado id {id_deputado} em {ano_consulta}"
+            f"{f'/{mes:02d}' if mes else ''} — {len(linhas_deputado)} registro(s), "
+            f"total {Formatador.moeda(total)} (mostrando os {len(selecionadas)} mais recentes):\n"
+        ]
+        for linha in selecionadas:
+            data = linha.get("datEmissao", "?").split("T")[0]
+            linhas.append(
+                f"- {data} | {linha.get('txtDescricao', '?')} | {linha.get('txtFornecedor', '?')}: "
+                f"{Formatador.moeda(self._valor_liquido(linha))}"
+            )
+        linhas.append("\nFonte: Câmara dos Deputados — arquivo oficial de despesas CEAP (camara.leg.br/cotas).")
         return "\n".join(linhas)
+
+    async def _obter_despesas_do_ano(self, ano: int) -> dict[str, list[dict]]:
+        """Baixa e agrupa por deputado (`ideCadastro`) o arquivo CSV oficial de
+        despesas CEAP do ano informado. Cache de 6h por ano, para não baixar de
+        novo o arquivo inteiro (dezenas de MB descompactado) a cada consulta."""
+        agora = time.monotonic()
+        em_cache = self._cache_despesas.get(ano)
+        if em_cache and (agora - em_cache[0]) < self._TTL_CACHE_DESPESAS_SEGUNDOS:
+            return em_cache[1]
+
+        url = self._URL_CSV_DESPESAS.format(ano=ano)
+        conteudo_zip = await self._http.buscar_bytes(url, timeout=45.0)
+
+        agrupado: dict[str, list[dict]] = defaultdict(list)
+        with zipfile.ZipFile(io.BytesIO(conteudo_zip)) as arquivo:
+            texto_csv = arquivo.read(arquivo.namelist()[0]).decode("utf-8-sig")
+        for linha in csv.DictReader(io.StringIO(texto_csv), delimiter=";"):
+            id_deputado = linha.get("ideCadastro")
+            if id_deputado:
+                agrupado[id_deputado].append(linha)
+
+        resultado = dict(agrupado)
+        self._cache_despesas[ano] = (agora, resultado)
+        return resultado
+
+    @staticmethod
+    def _valor_liquido(linha: dict) -> float:
+        """Converte o campo `vlrLiquido` do CSV (string, ex.: '168.85') em float."""
+        try:
+            return float(linha.get("vlrLiquido") or 0)
+        except ValueError:
+            return 0.0
 
     async def _resolver_id_por_nome(self, nome: str) -> int | str:
         """Busca o deputado pelo nome. Devolve o id se achar só 1 resultado, ou
@@ -264,7 +322,7 @@ async def camara_despesas_deputado(id_deputado: int | None = None, nome: str | N
         nome: Nome do deputado, usado para localizar o id quando `id_deputado`
             não é informado. Se houver mais de um resultado, peço para você
             escolher pelo id.
-        ano: Ano das despesas (recomendado informar; ex.: 2025).
+        ano: Ano das despesas (ex.: 2026). Se omitido, usa o ano corrente.
         mes: Mês das despesas, de 1 a 12 (opcional).
         top: Quantidade máxima de despesas a devolver (padrão 20, máximo 100).
     """
