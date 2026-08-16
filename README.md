@@ -25,9 +25,9 @@
 
 O **mcp-dados-brasil** é um servidor remoto que implementa o Model Context Protocol (MCP). Ele junta 6 fontes de dados abertas do governo brasileiro atrás de 11 tools: Pix (Banco Central), IBGE, Câmara dos Deputados, Senado Federal, Diário Oficial da União e Agência Brasil. Qualquer cliente MCP compatível chama essas tools em tempo real, pelo URL público do servidor.
 
-Este MCP existe para um caso de uso específico: dar a uma IA generativa acesso direto a dado público brasileiro, sem instalação local e sem chave de API. Cada tool consulta a fonte oficial ao vivo e devolve o dado real — a IA nunca precisa adivinhar um número ou citar uma fonte duvidosa.
+Este MCP existe para um caso de uso específico: dar a uma IA generativa acesso direto aos dados públicos brasileiros, sem instalação local e sem chave de API. Cada tool consulta a fonte oficial ao vivo e devolve o dado real, a IA generativa nunca precisa adivinhar um número ou citar uma fonte duvidosa.
 
-O público-alvo são equipes de checagem de fatos e a comunidade OSINT (inteligência de fontes abertas, na sigla em inglês). Por isso, o recorte de fontes prioriza transparência legislativa, diário oficial e notícias. O Pix entra como diferencial exclusivo: nenhum outro MCP brasileiro expõe hoje as estatísticas de transações do Banco Central.
+O público-alvo são equipes de checagem de fatos e a comunidade OSINT (inteligência de fontes abertas, na sigla em inglês). Por isso, o recorte de fontes prioriza transparência legislativa, diário oficial e notícias.
 
 O servidor usa o transporte Streamable HTTP e roda na nuvem, na Vercel, no URL `https://mcp-dados-brasil.vercel.app/mcp`. Não há login nem cadastro em nenhuma etapa, nem para conectar o MCP nem para nenhuma das 6 fontes de dados que ele consulta.
 
@@ -38,18 +38,20 @@ O servidor usa o transporte Streamable HTTP e roda na nuvem, na Vercel, no URL `
 > Este projeto é inspirado no [mcp-brasil](https://github.com/Mcp-Brasil/mcp-brasil), servidor MCP com 70 fontes de dados públicas brasileiras. O mcp-dados-brasil é um projeto **independente**, não um fork — não reaproveita código do mcp-brasil. Os créditos completos estão na seção [Sobre o mcp-dados-brasil](#sobre-o-mcp-dados-brasil).
 
 > [!IMPORTANT]
-> Cada cliente MCP decide, por conta própria, quando chamar as tools deste servidor — essa decisão não é controlada por este projeto. Em teste real, alguns clientes (ex.: Gemini Spark e ChatGPT) só chamam uma tool se você citar o nome do app no prompt, mesmo com o MCP já conectado; o Claude Web, no mesmo teste, chamou a tool sem precisar disso. Se a IA não usar o MCP sozinha, cite o nome que **você** deu ao app no passo 4 da instalação (não é fixo — cada pessoa escolhe o próprio nome ao conectar). Exemplo, supondo que você chamou o app de "DadosBrasil": `@DadosBrasil quero saber como está o Pix em Salvador e onde fica a cidade.`
+> Cada cliente MCP decide, por conta própria, quando chamar as tools deste servidor,  sendo que essa decisão não é controlada por este projeto. Em teste real, alguns clientes (ex.: Gemini Spark e ChatGPT) só chamam uma tool se você citar o nome do app no prompt, mesmo com o MCP já conectado; o Claude Chat, no mesmo teste, chamou a tool sem precisar disso. Se a IA generativa não usar o MCP sozinha, cite o nome que **você** deu ao app na instalação. Exemplo, supondo que você chamou o app de "DadosBrasil": `@DadosBrasil quero saber como está o Pix em Salvador em agosto de 2026`
 
 > [!NOTE]
-> Toda tool deste servidor é só leitura. Nenhuma tool grava, altera ou apaga dado em nenhum sistema externo. Quando uma fonte não devolve resultado, a tool diz isso — nunca inventa um dado para preencher a resposta.
+> Toda tool deste servidor é só leitura. Nenhuma tool grava, altera ou apaga dado em nenhum sistema externo. Quando uma fonte não devolve resultado, a tool diz isso e não inventa um dado para preencher a resposta.
 
 ## Sobre o mcp-dados-brasil
 
-Este projeto nasceu de duas observações sobre o [mcp-brasil](https://github.com/Mcp-Brasil/mcp-brasil): (1) a documentação dele só ensina instalação local (`http://localhost:8000/mcp`), que não funciona em clientes remotos como Gemini Spark, Claude Web e ChatGPT; (2) ele não expõe as estatísticas de transações Pix do Banco Central — só cita Pix de forma indireta, via emendas parlamentares do TransfereGov. O mcp-dados-brasil resolve os dois pontos: é remoto por padrão, hospedado na Vercel, e traz o Pix como diferencial exclusivo.
+Este projeto nasceu de duas observações sobre o [mcp-brasil](https://github.com/Mcp-Brasil/mcp-brasil): 
 
-O crédito ao mcp-brasil (licença MIT) é de propósito, não de código: mostrar que dado público brasileiro pode virar tool de IA sem exigir cadastro nem chave de API de quem consome.
+(1) a documentação dele só ensina instalação local, que não funciona em clientes remotos como Gemini Spark, Claude Chat e ChatGPT; 
 
-Nem toda fonte cogitada entrou nesta primeira versão. Portal da Transparência e dados.gov.br exigem cadastro de chave — fora do escopo deste projeto. TransfereGov não expôs um endpoint de dados navegável na API pública. Consulta de candidatos do TSE exige compor um id de eleição por UF/ano sem uma busca direta disponível. Nenhuma das três entrou para não arriscar uma tool instável.
+(2) ele não expõe as estatísticas de transações Pix do Banco Central, só cita Pix de forma indireta, via emendas parlamentares do TransfereGov. 
+
+O mcp-dados-brasil resolve os dois pontos, pois é remoto por padrão, hospedado na Vercel, e traz os dados estatísticos do Pix como diferencial exclusivo.
 
 ## Estrutura do projeto
 
@@ -114,7 +116,7 @@ Nem toda fonte cogitada entrou nesta primeira versão. Portal da Transparência 
 
 ## Requisitos
 
-Para **usar** o servidor a partir de um cliente MCP (Gemini Spark, Claude Web ou ChatGPT), você não precisa instalar nada. Basta um cliente que aceite um servidor MCP remoto via Streamable HTTP, e o URL público deste servidor.
+Para **usar** o servidor a partir de um cliente MCP (Gemini Spark, Claude Chat ou ChatGPT), você não precisa instalar nada. Basta um cliente que aceite um servidor MCP remoto via Streamable HTTP, e o URL público deste servidor.
 
 Para **rodar o projeto localmente** (desenvolvimento ou testes), instale antes:
 
@@ -161,7 +163,7 @@ O Gemini Spark é o modo agêntico do Gemini App.
 
 ## Exemplos de uso
 
-Conectou o MCP e não sabe o que perguntar? Veja **[exemplos-de-uso.md](exemplos-de-uso.md)** — um guia com 50 perguntas em linguagem natural, prontas para usar, cobrindo as 11 tools. Cada uma foi testada de verdade contra os dados reais das 6 fontes, incluindo 20 perguntas que cruzam 2 ou 3 tools ao mesmo tempo (ex.: "onde fica Cuiabá, como está o Pix por lá, e o que saiu no Diário Oficial mencionando a cidade?"). É o ponto de partida recomendado para quem quer ter ideia rápida das possibilidades antes de explorar por conta própria.
+Conectou o MCP e não sabe o que perguntar? Veja **[exemplos-de-uso.md](exemplos-de-uso.md)** — um guia com 50 perguntas em linguagem natural, prontas para usar, cobrindo as 11 tools. Cada uma foi testada, incluindo 20 perguntas que cruzam 2 ou 3 tools ao mesmo tempo (ex.: "onde fica Cuiabá, como está o Pix por lá, e o que saiu no Diário Oficial mencionando a cidade?"). É o ponto de partida recomendado para quem quer ter ideia rápida das possibilidades antes de explorar por conta própria.
 
 ## Links úteis
 
