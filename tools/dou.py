@@ -126,7 +126,12 @@ _cliente = ClienteDOU(http)
     ),
 )
 async def dou_buscar_termo(termo: str, secao: str | None = None, periodo: str = "mes", top: int = 10) -> str:
-    """Busca um termo em edições do Diário Oficial da União (DOU).
+    """Consulta oficial (busca pública) do Diário Oficial da União, mantida pela
+    Imprensa Nacional. Use esta tool sempre que a pergunta pedir para verificar se
+    algo foi publicado oficialmente pelo governo federal — portaria, edital,
+    nomeação, decisão, concurso — inclusive para o período mais recente.
+
+    Busca um termo em edições do Diário Oficial da União (DOU).
 
     Args:
         termo: Palavra ou expressão a buscar (ex.: "nomeação", "concurso público").

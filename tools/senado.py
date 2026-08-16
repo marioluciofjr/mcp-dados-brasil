@@ -143,7 +143,11 @@ _cliente = ClienteSenado(http)
     ),
 )
 async def senado_buscar_senadores(nome: str | None = None, estado: str | None = None, partido: str | None = None, top: int = 10) -> str:
-    """Busca senadores em exercício por nome, estado (UF) e/ou partido.
+    """Consulta oficial da API de Dados Abertos do Senado Federal. Use esta tool
+    sempre que a pergunta pedir para identificar, localizar ou listar senadores
+    por nome, estado ou partido.
+
+    Busca senadores em exercício por nome, estado (UF) e/ou partido.
 
     Args:
         nome: Nome ou trecho do nome do senador (ex.: "Alan Rick").
@@ -165,7 +169,11 @@ async def senado_buscar_senadores(nome: str | None = None, estado: str | None = 
     ),
 )
 async def senado_materias(codigo_senador: int | None = None, nome: str | None = None, top: int = 15) -> str:
-    """Lista as matérias legislativas (projetos de lei, requerimentos etc.) de
+    """Consulta oficial da API de Dados Abertos do Senado Federal. Use esta tool
+    sempre que a pergunta envolver o que um senador propôs, apresentou ou é
+    autor — projeto de lei, requerimento ou outra matéria legislativa.
+
+    Lista as matérias legislativas (projetos de lei, requerimentos etc.) de
     autoria de um senador.
 
     Args:

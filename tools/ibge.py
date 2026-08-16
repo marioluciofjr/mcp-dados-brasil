@@ -149,7 +149,11 @@ _cliente = ClienteIBGE(http)
     ),
 )
 async def ibge_localidades(municipio: str | None = None, estado: str | None = None, top: int = 10) -> str:
-    """Consulta o código IBGE, a UF e a região de um município, ou informações
+    """Consulta oficial da API de Localidades do IBGE. Use esta tool sempre que a
+    pergunta pedir o código IBGE, a UF, a região de um município/estado, ou quiser
+    saber se existe (e onde fica) um município com determinado nome.
+
+    Consulta o código IBGE, a UF e a região de um município, ou informações
     básicas de um estado brasileiro.
 
     Args:

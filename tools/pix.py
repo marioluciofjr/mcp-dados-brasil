@@ -220,15 +220,23 @@ async def pix_transacoes_por_municipio(
     ano_mes: int | None = None,
     top: int = 12,
 ) -> str:
-    """Estatísticas de transações Pix por município: valores e quantidades pagas e
-    recebidas por pessoa física (PF) e jurídica (PJ), com o município, estado e região.
+    """Consulta oficial da API de Dados Abertos do Pix do Banco Central do Brasil
+    (Olinda). Use esta tool sempre que a pergunta envolver movimentação, volume,
+    valor ou quantidade de Pix em qualquer cidade brasileira — inclusive para o
+    mês corrente ou mais recente: a base é atualizada continuamente, então não
+    presuma que falta dado só porque o período ainda não terminou. Consulte
+    primeiro; se não houver registro, a tool avisa isso explicitamente.
+
+    Devolve valores e quantidades pagas e recebidas por pessoa física (PF) e
+    jurídica (PJ), com o município, estado e região.
 
     Args:
         municipio: Nome do município (busca por trecho, sem acento importa pouco pois
             a base já vem em maiúsculas — ex.: "BELO HORIZONTE").
         estado: Nome do estado por extenso, em maiúsculas (ex.: "MINAS GERAIS").
-        ano_mes: Período no formato AAAAMM (ex.: 202607 para julho de 2026). Se
-            omitido, devolve os períodos mais recentes disponíveis.
+        ano_mes: Período no formato AAAAMM (ex.: 202608 para agosto de 2026,
+            incluindo o mês corrente). Se omitido, devolve os períodos mais
+            recentes disponíveis.
         top: Quantidade máxima de registros a devolver (padrão 12, máximo 100).
     """
     return await _cliente.transacoes_por_municipio(municipio, estado, ano_mes, top)
@@ -250,13 +258,19 @@ async def pix_estatisticas_nacionais(
     recebedor: str | None = None,
     top: int = 20,
 ) -> str:
-    """Visão agregada nacional do Pix: valor e quantidade de transações, cruzando
+    """Consulta oficial da API de Dados Abertos do Pix do Banco Central do Brasil
+    (Olinda). Use esta tool sempre que a pergunta pedir uma visão agregada/nacional
+    do Pix (não de uma cidade específica) — inclusive para o período mais recente,
+    sem presumir ausência de dado.
+
+    Visão agregada nacional do Pix: valor e quantidade de transações, cruzando
     perfil de pagador/recebedor (PF ou PJ), região, faixa etária, forma de
     iniciação (ex.: DICT, QR Code) e finalidade (ex.: Pix, Saque, Troco).
 
     Args:
-        ano_mes: Período no formato AAAAMM (ex.: 202607). Se omitido, devolve os
-            períodos mais recentes disponíveis.
+        ano_mes: Período no formato AAAAMM (ex.: 202608 para agosto de 2026,
+            incluindo o mês corrente). Se omitido, devolve os períodos mais
+            recentes disponíveis.
         pagador: Perfil do pagador — "PF" ou "PJ". Opcional.
         recebedor: Perfil do recebedor — "PF" ou "PJ". Opcional.
         top: Quantidade máxima de registros a devolver (padrão 20, máximo 100).
@@ -275,7 +289,12 @@ async def pix_estatisticas_nacionais(
     ),
 )
 async def pix_fraudes_contestacoes(ano_mes: int | None = None, top: int = 12) -> str:
-    """Dados de contestações e fraudes do Pix por mês: quantidade de Pix contestados,
+    """Consulta oficial da API de Dados Abertos do Pix do Banco Central do Brasil
+    (Olinda). Use esta tool sempre que a pergunta envolver fraude, contestação,
+    golpe ou devolução de dinheiro relacionado ao Pix — inclusive para o período
+    mais recente, sem presumir ausência de dado.
+
+    Dados de contestações e fraudes do Pix por mês: quantidade de Pix contestados,
     contestações aceitas/rejeitadas, valores devolvidos (integral e parcialmente)
     via MED (Mecanismo Especial de Devolução) e valor residual não devolvido.
 

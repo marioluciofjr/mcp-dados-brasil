@@ -94,7 +94,11 @@ _cliente = ClienteNoticias(http)
     ),
 )
 async def noticias_agencia_brasil(editoria: str = "geral", top: int = 10) -> str:
-    """Últimas notícias publicadas pela Agência Brasil (EBC), agência pública de
+    """Feed oficial da Agência Brasil (EBC), agência pública de notícias. Use esta
+    tool sempre que a pergunta pedir as notícias mais recentes do Brasil por
+    assunto — não faz busca por palavra-chave, só filtra por editoria.
+
+    Últimas notícias publicadas pela Agência Brasil (EBC), agência pública de
     notícias, filtradas por editoria.
 
     Args:

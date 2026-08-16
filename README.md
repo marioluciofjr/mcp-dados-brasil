@@ -38,7 +38,7 @@ O servidor usa o transporte Streamable HTTP e roda na nuvem, na Vercel, no URL `
 > Este projeto é inspirado no [mcp-brasil](https://github.com/Mcp-Brasil/mcp-brasil), servidor MCP com 70 fontes de dados públicas brasileiras. O mcp-dados-brasil é um projeto **independente**, não um fork — não reaproveita código do mcp-brasil. Os créditos completos estão na seção [Sobre o mcp-dados-brasil](#sobre-o-mcp-dados-brasil).
 
 > [!IMPORTANT]
-> Cada cliente MCP decide, por conta própria, quando chamar as tools deste servidor — essa decisão não é controlada por este projeto. Em teste real, alguns clientes só chamam uma tool se você citar o nome do app no prompt, mesmo com o MCP já conectado. Se a IA não usar o MCP sozinha, cite o nome do app diretamente. Exemplo: `@DadosBrasil quero saber como está o Pix em Salvador e onde fica a cidade.`
+> Cada cliente MCP decide, por conta própria, quando chamar as tools deste servidor — essa decisão não é controlada por este projeto. Em teste real, alguns clientes (ex.: Gemini Spark e ChatGPT) só chamam uma tool se você citar o nome do app no prompt, mesmo com o MCP já conectado; o Claude Web, no mesmo teste, chamou a tool sem precisar disso. Se a IA não usar o MCP sozinha, cite o nome que **você** deu ao app no passo 4 da instalação (não é fixo — cada pessoa escolhe o próprio nome ao conectar). Exemplo, supondo que você chamou o app de "DadosBrasil": `@DadosBrasil quero saber como está o Pix em Salvador e onde fica a cidade.`
 
 > [!NOTE]
 > Toda tool deste servidor é só leitura. Nenhuma tool grava, altera ou apaga dado em nenhum sistema externo. Quando uma fonte não devolve resultado, a tool diz isso — nunca inventa um dado para preencher a resposta.

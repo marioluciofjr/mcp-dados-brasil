@@ -256,10 +256,14 @@ _cliente = ClienteCamara(http)
     ),
 )
 async def camara_buscar_deputados(nome: str | None = None, estado: str | None = None, partido: str | None = None, top: int = 10) -> str:
-    """Busca deputados federais em exercício por nome, estado (UF) e/ou partido.
+    """Consulta oficial da API de Dados Abertos da Câmara dos Deputados. Use esta
+    tool sempre que a pergunta pedir para identificar, localizar ou listar
+    deputados federais por nome, estado ou partido.
+
+    Busca deputados federais em exercício por nome, estado (UF) e/ou partido.
 
     Args:
-        nome: Nome ou trecho do nome do deputado (ex.: "Nikolas").
+        nome: Nome ou trecho do nome do deputado (ex.: "Domingos Sávio").
         estado: Sigla da UF (ex.: "MG").
         partido: Sigla do partido (ex.: "PL").
         top: Quantidade máxima de resultados (padrão 10, máximo 50).
@@ -284,7 +288,11 @@ async def camara_votacoes(
     id_votacao: str | None = None,
     top: int = 10,
 ) -> str:
-    """Lista as votações de uma proposição legislativa (ex.: PL 1800/2023), ou os
+    """Consulta oficial da API de Dados Abertos da Câmara dos Deputados. Use esta
+    tool sempre que a pergunta envolver votação, aprovação/rejeição ou tramitação
+    de um projeto de lei (PL), PEC, PLP ou outra proposição legislativa.
+
+    Lista as votações de uma proposição legislativa (ex.: PL 1800/2023), ou os
     votos individuais de uma votação específica quando há registro nominal
     (nem toda votação da Câmara é nominal — votações simbólicas não têm votos
     individuais registrados, e a tool avisa isso em vez de inventar um resultado).
@@ -313,7 +321,12 @@ async def camara_votacoes(
     ),
 )
 async def camara_despesas_deputado(id_deputado: int | None = None, nome: str | None = None, ano: int | None = None, mes: int | None = None, top: int = 20) -> str:
-    """Despesas da Cota para Exercício da Atividade Parlamentar (CEAP) de um
+    """Consulta oficial do arquivo de despesas CEAP publicado pela Câmara dos
+    Deputados. Use esta tool sempre que a pergunta envolver gasto, despesa,
+    cota parlamentar ou transparência de um deputado — inclusive para o ano
+    corrente, sem presumir ausência de dado.
+
+    Despesas da Cota para Exercício da Atividade Parlamentar (CEAP) de um
     deputado — passagens, combustível, consultoria, divulgação etc.
 
     Args:
