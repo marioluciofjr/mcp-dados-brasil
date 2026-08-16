@@ -4,6 +4,9 @@ Este guia mostra 50 perguntas em linguagem natural que você pode fazer ao conec
 
 Você não precisa saber o nome de nenhuma tool para usar o MCP: basta perguntar em português normal, como nos exemplos abaixo. Os nomes das tools aparecem aqui só para você entender o que está acontecendo por trás.
 
+> [!TIP]
+> Se a pergunta bater com um dos temas deste guia e o cliente mesmo assim não chamar nenhuma tool, cite o nome do app no começo do prompt (ex.: `@DadosBrasil ...`) — alguns clientes só consideram um MCP quando ele é citado diretamente, mesmo já conectado.
+
 > [!NOTE]
 > Os números (valores em R$, quantidades, datas de notícia) mudam a cada nova consulta, porque as fontes são atualizadas o tempo todo. O trecho de resposta aqui é uma fotografia do dia do teste — o formato e o tipo de informação que você recebe são o que importa reproduzir.
 

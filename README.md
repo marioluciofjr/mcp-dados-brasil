@@ -29,13 +29,16 @@ Este MCP existe para um caso de uso específico: dar a uma IA generativa acesso 
 
 O público-alvo são equipes de checagem de fatos e a comunidade OSINT (inteligência de fontes abertas, na sigla em inglês). Por isso, o recorte de fontes prioriza transparência legislativa, diário oficial e notícias. O Pix entra como diferencial exclusivo: nenhum outro MCP brasileiro expõe hoje as estatísticas de transações do Banco Central.
 
-O servidor usa o transporte Streamable HTTP e roda na nuvem, na Vercel, no URL `{{URL_MCP}}`. Não há login nem cadastro em nenhuma etapa, nem para conectar o MCP nem para nenhuma das 6 fontes de dados que ele consulta.
+O servidor usa o transporte Streamable HTTP e roda na nuvem, na Vercel, no URL `https://mcp-dados-brasil.vercel.app/mcp`. Não há login nem cadastro em nenhuma etapa, nem para conectar o MCP nem para nenhuma das 6 fontes de dados que ele consulta.
 
 > [!IMPORTANT]
 > Esse URL só aceita pedidos `POST` e `DELETE`, no formato do protocolo MCP. Se você colar o URL no navegador, ele faz um pedido `GET` e mostra a mensagem "Method Not Allowed". Isso é esperado, não é um erro. Confirma só que o servidor está no ar. Use o URL dentro de um cliente MCP, não direto no navegador.
 
 > [!IMPORTANT]
 > Este projeto é inspirado no [mcp-brasil](https://github.com/Mcp-Brasil/mcp-brasil), servidor MCP com 70 fontes de dados públicas brasileiras. O mcp-dados-brasil é um projeto **independente**, não um fork — não reaproveita código do mcp-brasil. Os créditos completos estão na seção [Sobre o mcp-dados-brasil](#sobre-o-mcp-dados-brasil).
+
+> [!IMPORTANT]
+> Cada cliente MCP decide, por conta própria, quando chamar as tools deste servidor — essa decisão não é controlada por este projeto. Em teste real, alguns clientes só chamam uma tool se você citar o nome do app no prompt, mesmo com o MCP já conectado. Se a IA não usar o MCP sozinha, cite o nome do app diretamente. Exemplo: `@DadosBrasil quero saber como está o Pix em Salvador e onde fica a cidade.`
 
 > [!NOTE]
 > Toda tool deste servidor é só leitura. Nenhuma tool grava, altera ou apaga dado em nenhum sistema externo. Quando uma fonte não devolve resultado, a tool diz isso — nunca inventa um dado para preencher a resposta.
@@ -125,7 +128,7 @@ O Gemini Spark é o modo agêntico do Gemini App.
 1. Acesse a barra lateral do Gemini Web e clique em "Spark".
 2. Clique na aba "Apps Conectados".
 3. Desça a barra de rolagem e clique no botão "Adicionar app personalizado".
-4. Cole o link do MCP (`{{URL_MCP}}`) no espaço "Adicione um link de app personalizado".
+4. Cole o link do MCP (`https://mcp-dados-brasil.vercel.app/mcp`) no espaço "Adicione um link de app personalizado".
 5. Clique no botão "Avançar".
 6. Desça a barra de rolagem da nova tela e marque a caixa de seleção que tem a mensagem "Entendo e aceito os riscos de segurança e privacidade ao conectar este app personalizado".
 7. Clique no botão "Conectar" e aguarde a próxima tela.
@@ -140,7 +143,7 @@ O Gemini Spark é o modo agêntico do Gemini App.
 2. Escolha a aba "Conectores".
 3. Clique no botão "Adicionar" e escolha a opção "Adicionar conector personalizado".
 4. Dê um nome para o conector.
-5. Cole o link do MCP (`{{URL_MCP}}`) no espaço abaixo do nome que escolheu na etapa 4.
+5. Cole o link do MCP (`https://mcp-dados-brasil.vercel.app/mcp`) no espaço abaixo do nome que escolheu na etapa 4.
 6. Clique no botão "Adicionar".
 7. Clique no botão "Vincular".
 8. Clique no botão "Requer aprovação" e mude para "Sempre permitir".
@@ -150,7 +153,7 @@ O Gemini Spark é o modo agêntico do Gemini App.
 1. Na barra lateral, clique em "Plugins".
 2. Clique no botão "+", que fica do lado de "Pesquisar plugins".
 3. Na tela "Novo plugin", dê um nome no espaço "Nome".
-4. Em "Conexão", cole o link do MCP (`{{URL_MCP}}`) e deixe a opção "URL do Servidor" habilitada.
+4. Em "Conexão", cole o link do MCP (`https://mcp-dados-brasil.vercel.app/mcp`) e deixe a opção "URL do Servidor" habilitada.
 5. Em "Autenticação", escolha a opção "Sem autenticação" (este servidor não usa OAuth).
 6. Clique na caixa de seleção "Entendi e quero continuar".
 7. Clique no botão "Criar".

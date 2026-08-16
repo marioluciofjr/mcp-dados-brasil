@@ -19,10 +19,26 @@ from __future__ import annotations
 import httpx
 from fastmcp import FastMCP
 
+# `instructions` vai no handshake inicial do protocolo MCP e é o principal sinal
+# que um cliente (Gemini Spark, Claude, ChatGPT) tem para decidir, sozinho, se
+# chama uma tool deste servidor — mesmo quando a pessoa usuária não cita o nome
+# do app no prompt. Por isso o texto é explícito sobre QUANDO usar cada tool,
+# não só sobre o que o servidor é.
+_INSTRUCOES_SERVIDOR = (
+    "Servidor de dados abertos e públicos do governo brasileiro, só leitura, sem "
+    "chave de API. Use estas tools sempre que a pergunta envolver: estatísticas de "
+    "transações Pix (Banco Central); código IBGE, UF ou região de um município ou "
+    "estado; deputados federais, suas votações ou despesas (CEAP); senadores "
+    "federais ou as matérias legislativas deles; busca de termo no Diário Oficial "
+    "da União; ou últimas notícias por editoria via Agência Brasil. Chame uma "
+    "tool sempre que o pedido casar com um desses temas, mesmo que a pessoa não "
+    "mencione o nome deste servidor ou peça explicitamente para 'usar o MCP'."
+)
+
 # Instância única do servidor MCP, compartilhada por todos os módulos de tools/.
 # Cada módulo usa o decorador @mcp.tool desta mesma instância para registrar
 # suas tools — é isso que junta tudo num só servidor na hora do deploy.
-mcp = FastMCP("DadosBrasil")
+mcp = FastMCP("DadosBrasil", instructions=_INSTRUCOES_SERVIDOR)
 
 
 class ErroConsultaExterna(Exception):
