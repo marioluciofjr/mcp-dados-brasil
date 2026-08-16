@@ -118,11 +118,6 @@ O mcp-dados-brasil resolve os dois pontos, pois é remoto por padrão, hospedado
 
 Para **usar** o servidor a partir de um cliente MCP (Gemini Spark, Claude Chat ou ChatGPT), você não precisa instalar nada. Basta um cliente que aceite um servidor MCP remoto via Streamable HTTP, e o URL público deste servidor.
 
-Para **rodar o projeto localmente** (desenvolvimento ou testes), instale antes:
-
-* [Python 3.12](https://www.python.org/downloads/) ou superior.
-* As dependências do projeto: `pip install -r requirements.txt`.
-
 ## Como instalar no Gemini Spark
 
 O Gemini Spark é o modo agêntico do Gemini App.
